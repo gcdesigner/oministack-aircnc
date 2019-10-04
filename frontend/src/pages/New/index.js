@@ -1,21 +1,39 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import api from '../../services/api'
 
 
 import camera from '../../assets/camera.svg'
 import './styles.scss'
 
-export default function New({ history }) {
+export default function New({ history, match }) {
     const [thumbnail, setThumbnail] = useState(null)
     const [company, setCompany] = useState('')
     const [techs, setTechs] = useState([])
     const [price, setPrice] = useState('')
+    const spot_id = match.params.id
+
+    useEffect(() => {
+        async function getSpot() {
+            if (spot_id) {
+                const response = await api.get(`/spots/${spot_id}`)
+                const { thumbnail, company, techs, price } = response.data
+                // const img = JSON.parse(thumbnail)
+                console.log(thumbnail)
+
+                // setThumbnail(img)
+                setCompany(company)
+                setTechs(techs)
+                setPrice(price)
+            }
+        }
+        getSpot()
+    }, [])
+
 
     const preview = useMemo(() => {
+        // return
         return thumbnail ? URL.createObjectURL(thumbnail) : null
-    },
-        [thumbnail]
-    )
+    }, [thumbnail])
 
     async function handeSubmit(e) {
         e.preventDefault()
@@ -28,9 +46,15 @@ export default function New({ history }) {
         data.append('techs', techs)
         data.append('price', price)
 
-        await api.post('/spots', data, {
-            headers: { user_id }
-        })
+        if (!spot_id) {
+            await api.post('/spots', data, {
+                headers: { user_id }
+            })
+        } else {
+            await api.put(`/spots/${spot_id}`, data, {
+                headers: { user_id }
+            })
+        }
 
         history.push('/dashboard')
     }
