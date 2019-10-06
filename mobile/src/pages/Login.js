@@ -3,6 +3,8 @@ import { Platform, View, AsyncStorage, KeyboardAvoidingView, StyleSheet, Image, 
 
 import api from '../services/api'
 
+import logo from '../assets/logo.png'
+
 export default function Login({ navigation }) {
 
     const [email, setEmail] = useState('')
@@ -17,8 +19,7 @@ export default function Login({ navigation }) {
     }, [])
 
     async function handleSubmit() {
-        console.log(email)
-        console.log(techs)
+        console.log(email, techs)
 
         const response = await api.post('/sessions', { email })
 
@@ -27,11 +28,12 @@ export default function Login({ navigation }) {
         await AsyncStorage.setItem('user', _id)
         await AsyncStorage.setItem('techs', techs)
 
-        navigation.navigate('List') 
+        navigation.navigate('List')
     }
 
     return (
-        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="padding" style={styles.container}>
+            <Image style={styles.logo} source={logo} />
             <View style={styles.form}>
                 <Text style={styles.label}>SEU EMAIL *</Text>
                 <TextInput
@@ -55,11 +57,11 @@ export default function Login({ navigation }) {
                     value={techs}
                     onChangeText={setTechs}
                 />
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Encontrar Spots</Text>
+                </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Encontrar Spots</Text>
-            </TouchableOpacity>
         </KeyboardAvoidingView>
     )
 }
@@ -69,6 +71,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+
+    logo: {
+        width: 200,
+        resizeMode: 'contain',
+        marginBottom: 10,
     },
 
     form: {
@@ -101,11 +109,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#f05a5b',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 2
+        borderRadius: 2,
+        paddingHorizontal: 20,
     },
 
     buttonText: {
-        width: '100%',
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
