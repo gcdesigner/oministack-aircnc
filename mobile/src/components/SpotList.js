@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, SearchBar } from 'react-native'
 import { withNavigation } from 'react-navigation'
 
 import api from '../services/api'
@@ -19,23 +19,27 @@ function SpotList({ tech, navigation }) {
         loadSpots()
     }, [])
 
-    function handleNavigate(id){
+    function handleNavigate(id) {
         navigation.navigate('Book')
+    }
+
+    function renderHeader() {
+        return <SearchBar />
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Empresas que usas <Text style={styles.bold}>{tech}</Text></Text>
+            <Text style={styles.title}>Empresas que usam <Text style={styles.bold}>{tech}</Text></Text>
             <FlatList
-                style={styles.list}
+                contentContainerStyle={styles.list}
                 data={spots}
                 keyExtractor={spot => spot._id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                // ListHeaderComponent={renderHeader}
                 renderItem={({ item }) => (
                     <View style={styles.listItem}>
-                        {console.log(item.thumbnail_url)}
-                        <Image style={styles.thumbnail} source={{uri: item.thumbnail_url}} />
+                        <Image style={styles.thumbnail} source={{ uri: item.thumbnail_url }} />
                         <Text style={styles.company}>{item.company}</Text>
                         <Text style={styles.price}>{item.price ? `R$${item.price}` : 'GRATUITO'}</Text>
                         <TouchableOpacity onPress={() => handleNavigate(item._id)} style={styles.button}>
@@ -65,7 +69,8 @@ const styles = StyleSheet.create({
     },
 
     list: {
-        paddingHorizontal: 20,
+        paddingLeft: 20,
+        paddingRight: 5,
     },
 
     listItem: {
@@ -77,7 +82,7 @@ const styles = StyleSheet.create({
         height: 120,
         resizeMode: 'cover',
         borderRadius: 2,
-        backgroundColor: 'red'
+        // backgroundColor: 'red'
     },
 
     company: {

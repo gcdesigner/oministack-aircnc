@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, AsyncStorage, Image, SafeAreaView, Text } from 'react-native'
+import { StyleSheet, ScrollView, AsyncStorage, Image, Text } from 'react-native'
+import SafeAreaView, { SafeAreaProvider } from 'react-native-safe-area-view'
 
 import logo from '../assets/logo.png'
 import SpotList from '../components/SpotList'
@@ -15,19 +16,16 @@ export default function List({ navigation }) {
         })
     }, [])
 
-    function handleLogout(){
-        AsyncStorage.setItem('user', '')
-        navigation.navigate('Login')
-    }
-
     return (
-        <SafeAreaView style={styles.container}>
-            <Image source={logo} style={styles.logo} />
-            <ScrollView>
-                <Text style={styles.logout} onPress={handleLogout}>Logout</Text>
-                {techs.map(tech => <SpotList key={tech} tech={tech} /> )}            
-            </ScrollView>
-        </SafeAreaView>
+        <SafeAreaProvider>
+            <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
+                <Image source={logo} style={styles.logo} />
+                <ScrollView>
+                    {/* <Text style={styles.logout} onPress={handleLogout}>Logout</Text> */}
+                    {techs.map(tech => <SpotList key={tech} tech={tech} />)}
+                </ScrollView>
+            </SafeAreaView>
+        </SafeAreaProvider>
     )
 }
 
@@ -44,6 +42,8 @@ const styles = StyleSheet.create({
     },
 
     logout: {
+        width: 100,
+        alignSelf: 'center',
         fontSize: 16,
         color: '#fff',
         padding: 5,

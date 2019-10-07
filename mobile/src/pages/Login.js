@@ -12,7 +12,7 @@ export default function Login({ navigation }) {
 
     useEffect(() => {
         AsyncStorage.getItem('user').then(user => {
-            if(user) {
+            if (user) {
                 navigation.navigate('List')
             }
         })
@@ -26,6 +26,7 @@ export default function Login({ navigation }) {
         const { _id } = response.data
 
         await AsyncStorage.setItem('user', _id)
+        await AsyncStorage.setItem('user_email', email)
         await AsyncStorage.setItem('techs', techs)
 
         navigation.navigate('List')
